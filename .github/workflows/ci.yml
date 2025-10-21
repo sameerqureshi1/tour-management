@@ -10,10 +10,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # Step 1: Checkout the repository
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Deploy to VM via SSH
+      # Step 2: Deploy to VM via SSH
+      - name: Deploy to VM
         uses: appleboy/ssh-action@v0.1.9
         with:
           host: ${{ secrets.VM_HOST }}
@@ -22,7 +24,8 @@ jobs:
           port: 22
           script: |
             set -e
-            cd /home/ubuntu/Tour-Project
+            echo "Navigating to project directory..."
+            cd /home/ubuntu/tour-management
 
             echo "Pulling latest code..."
             git fetch origin main
