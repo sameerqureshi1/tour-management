@@ -10,12 +10,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout the repository
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # Step 2: Deploy to VM via SSH
-      - name: Deploy to VM
+      - name: Deploy to VM via SSH
         uses: appleboy/ssh-action@v0.1.9
         with:
           host: ${{ secrets.VM_HOST }}
@@ -23,17 +21,18 @@ jobs:
           key: ${{ secrets.VM_KEY }}
           port: 22
           script: |
-            echo "Navigating to project directory..."
+            set -e
             cd /home/ubuntu/Tour-Project
 
             echo "Pulling latest code..."
-            git pull origin main || true
+            git fetch origin main
+            git reset --hard origin/main
 
             echo "Stopping old container if exists..."
             docker stop tour-test || true
             docker rm tour-test || true
 
-            echo "Building Docker image on the VM..."
+            echo "Building Docker image..."
             docker build -t tour-project .
 
             echo "Running new container..."
